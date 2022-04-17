@@ -1,23 +1,37 @@
-import logo from './logo.svg';
+
 import './App.css';
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+
+} from "react-router-dom";
+
+import History from './views/History';
+import Layoutcomp from './views/Layoutcomp';
+import Tablecom from './views/Tablecom';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     
+      <Router>
+       
+        <div className='main'>
+          <div className='sidebar'>
+            <Layoutcomp/>
+          </div>
+          <div className='content'>
+            <Routes>
+              <Route exact path="/" element={<Tablecom/>}/>
+
+              <Route exact path="/history" element={<History/>} />
+
+            </Routes>
+          </div>
+        </div>
+      </Router>
     </div>
   );
 }
