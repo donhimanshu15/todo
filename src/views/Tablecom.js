@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import './tablecomp.css'
 import * as actions from '../store/action/todoAction'
 import { getTodoList } from '../service/todoServices';
 import {updateTodo} from '../helper/todoHelper'
 import { v1 as uuid} from  'uuid'
+import { DatePicker } from 'antd';
 import { Table, Tag, Space, Input, Checkbox, Button, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
@@ -15,8 +17,8 @@ super(props)
         this.state = {
           name:"",
           isEdit: false,
-editDetails:"",
-editId: 0
+            editDetails:"",
+        editId: 0
 
 
             
@@ -35,14 +37,23 @@ editId: 0
 
         {
             title: 'Title',
-            dataIndex: 'title',
+            render: record=>{
+         
+               if(record.completed) return <>{record.title.strike()} </>
+               else return record.title
+                       
+                      
+                   
+               },
             key: 'title',
         },
         {
             title: 'Completed',
             render: record => {
+                
                 return <>
-                    <Checkbox onClick={() => this.oncheck(record)} onChange={(item)=>this.props.completeTodos(item.id)}></Checkbox>
+                
+                    <Checkbox checked={record.completed} onClick="" onChange={() => this.oncheck(record) }></Checkbox>
                     {/* {record.completed.toString()} */}
 
 
@@ -77,6 +88,7 @@ editId: 0
 
 
         }]
+        
       
         addButton=()=>{
 this.props.addTodos({
@@ -105,6 +117,10 @@ onEdit = (record) => {
     this.setState({editId:record.id})
     this.setState({ editDetails: { ...record } })
 }
+ondateChange(date, dateString) {
+    console.log(date, dateString);
+  }
+
   render() {
     return (
        
@@ -122,7 +138,7 @@ onEdit = (record) => {
                     </Button >
 
                 </div>
-       <Table columns={this.columns} dataSource={this.props?.state?.tabledata.filter(val => val.completed === false) }></Table>
+       <Table  columns={this.columns} dataSource={this.props?.state?.tabledata }></Table>
        <Modal title="Edit details"
                     visible={this.state.isEdit}
                     okText="Save"
@@ -140,6 +156,28 @@ this.onResetEdit()
                  
 
 
+                </Modal>
+                <Modal title="Add User"
+                   visible="true"
+                    okText="Save"
+                    onCancel={() => { this.onResetEdit() }}
+                    onOk={(record) => {
+                       
+                   this.props.updateTodos({id: this.state.editId,title:this.state.editDetails})
+this.onResetEdit()
+                    }}>
+
+                   <div>
+                   <div>  <Input placeholder='ADD TODO.....'
+                            onChange={(e) => this.setState({ name: e.target.value })}
+                            value={this.state.name}
+
+                        />
+                 </div>
+                 <div >
+                 <DatePicker className='datepicker' onChange={this.ondateChange} />
+                 </div>
+                 </div>
                 </Modal>
       </>
     )
