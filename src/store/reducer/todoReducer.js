@@ -1,4 +1,4 @@
-
+import moment from 'moment'
 
 const initialState = {
   tabledata: []
@@ -21,12 +21,12 @@ const Reducer = (state = initialState, action) => {
       }
     }
     case "ADD_TODO": {
-      const { id, title } = action.payload;
+      const { id, title, date } = action.payload;
       return {
         ...state,
         tabledata: [
           ...state.tabledata,
-          { title: title, completed: false, id: id }
+          { title: title, completed: false, id: id, date: date }
         ]
       }
     }
@@ -38,6 +38,11 @@ const Reducer = (state = initialState, action) => {
     case "COMPLETE_TODO": {
       const id = action.payload;
       const tabledata = state.tabledata.map(obj => obj.id === id ? { ...obj, completed: !obj.completed } : obj);
+      return { tabledata }
+    }
+    case "DATE_SETER": {
+      const { id, completed_date } = action.payload;
+      const tabledata = state.tabledata.map(obj => obj.id === id ? { ...obj, completed_date: completed_date } : obj);
       return { tabledata }
     }
     default:

@@ -43,3 +43,29 @@
   align-items: center;
   margin-top: 20px;
 }
+
+.taskbox {
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: rgb(247, 243, 243);
+  margin-bottom: 40px;
+  margin-top: -30px;
+}
+
+.bo {
+
+  flex-direction: row;
+
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addbu {
+  border-radius: 20px;
+
+}
+
+.taskbox {
+  border-radius: 20px;
+}

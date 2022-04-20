@@ -11,14 +11,18 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
  class Dashboard extends Component {
+     
     constructor(props) {
         
 super(props)
         this.state = {
           name:"",
           isEdit: false,
+          isAdd:false,
             editDetails:"",
-        editId: 0
+            addDetails:"",
+            dte:"",
+        editId: 0,
 
 
             
@@ -33,6 +37,7 @@ super(props)
         this.props.getTodos(finalData)
         console.log(this.props?.state?.tabledata)
     }
+    
     columns = [
 
         {
@@ -63,15 +68,28 @@ super(props)
         },
         
         {
-            title: 'Date',
-           render: record=>{
+            title: 'Starting Date',
+           // dataIndex: 'starting_date',
+          render: record=>{
          
-            return moment(record.date).format('MMMM Do YYYY, h:mm:ss a');
+           return moment(record.date).format('YYYY/MM/DD');
                    
                   
                
            },
             key: 'date',
+        },
+        {
+            title: 'Completion Date',
+           render: record=>{
+
+            return <DatePicker defaultValue={moment()} format={'YYYY/MM/DD'}  onChange={(date, dateString)=> {this.props.dateSeter({id: record.id, completed_date:dateString})} } />
+                   
+            // 
+               
+           },
+        // dataIndex: 'completed_date',
+            key: 'completed_date',
         },
         {
             title: 'Action',
@@ -91,12 +109,13 @@ super(props)
         
       
         addButton=()=>{
-this.props.addTodos({
-    id: uuid(),
-    title: this.state.name,
+            this.setState({isAdd: true})
+// this.props.addTodos({
+//     id: uuid(),
+//     title: this.state.name,
     
-});
-this.setState({name:""})
+// });
+// this.setState({name:""})
         }
         onDelete=(record)=>{
 this.props.removeTodos(record.id)
@@ -105,20 +124,25 @@ this.props.removeTodos(record.id)
       console.log(e.target.checked)
    }
    oncheck=(record)=>{
-      
+    
 this.props.completeTodos(record.id)
    }
    onResetEdit = () => {
     this.setState({ isEdit: false })
     this.setState({ editDetails: null })
 }
+onResetAdd = () => {
+    this.setState({ isAdd: false })
+    this.setState({ addDetails: null })
+}
 onEdit = (record) => {
     this.setState({ isEdit: true })
     this.setState({editId:record.id})
     this.setState({ editDetails: { ...record } })
 }
-ondateChange(date, dateString) {
-    console.log(date, dateString);
+ondateChange=(date, dateString)=> {
+  
+   this.setState({dte: dateString})
   }
 
   render() {
@@ -126,19 +150,13 @@ ondateChange(date, dateString) {
        
       <>
        <div className='addtodobox'>
-                    <div className='inputbox'>
-                        <Input placeholder='ADD TODO.....'
-                            onChange={(e) => this.setState({ name: e.target.value })}
-                            value={this.state.name}
-
-                        />
-                    </div>
-                    <Button type="primary" onClick={()=>this.addButton()}>
+                  
+                    <Button type="primary" className='addbu' onClick={()=>this.addButton()}>
                         Add
                     </Button >
 
                 </div>
-       <Table  columns={this.columns} dataSource={this.props?.state?.tabledata }></Table>
+       <Table className='tablebox' columns={this.columns} dataSource={this.props?.state?.tabledata }></Table>
        <Modal title="Edit details"
                     visible={this.state.isEdit}
                     okText="Save"
@@ -158,13 +176,19 @@ this.onResetEdit()
 
                 </Modal>
                 <Modal title="Add User"
-                   visible="true"
+                   visible={this.state.isAdd}
                     okText="Save"
-                    onCancel={() => { this.onResetEdit() }}
+                    onCancel={() => { this.onResetAdd() }}
                     onOk={(record) => {
+                       console.log(this.state.date)
+                        this.props.addTodos({
+                            id: uuid(),
+                            title: this.state.name,
+                            date:this.state.date
+                        });
+                        this.setState({name:""})
                        
-                   this.props.updateTodos({id: this.state.editId,title:this.state.editDetails})
-this.onResetEdit()
+this.onResetAdd()
                     }}>
 
                    <div>
@@ -174,9 +198,7 @@ this.onResetEdit()
 
                         />
                  </div>
-                 <div >
-                 <DatePicker className='datepicker' onChange={this.ondateChange} />
-                 </div>
+                
                  </div>
                 </Modal>
       </>
@@ -195,6 +217,7 @@ removeTodos:(payload) => dispatch(actions.removeTodos(payload)),
 addTodos: (payload) => dispatch(actions.addTodos(payload)),
 updateTodos: (payload) => dispatch(actions.updateTodos(payload)),
 completeTodos: (payload) => dispatch(actions.completeTodos(payload)),
+dateSeter: (payload) => dispatch(actions.dateSeter(payload)),
     }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(Dashboard)

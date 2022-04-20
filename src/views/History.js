@@ -3,12 +3,13 @@ import { Table, Tag, Space, Input, Checkbox } from 'antd';
 import './tablecomp.css'
 import 'antd/dist/antd.less'
 import { getTodoList } from '../service/todoServices';
-import { updateTodo } from '../helper/todoHelper'
+import { taskcompleted, updateTodo } from '../helper/todoHelper'
 import { Button, Modal } from 'antd';
 import { connect } from 'react-redux';
 import * as actions from '../store/action/todoAction'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
+import { timetaken, dateSet } from '../helper/todoHelper'
 class History extends Component {
 
   columns = [
@@ -20,10 +21,12 @@ class History extends Component {
     },
 
     {
-      title: 'Date',
+      title: 'Time Taken',
       render: record => {
-        console.log(record.date)
-        return moment(record.date).format('MMMM Do YYYY, h:mm:ss a');
+
+        const t = timetaken(record.starting_date, record.completed_date)
+
+        return t + " " + "days"
 
 
 
@@ -33,9 +36,22 @@ class History extends Component {
 
   ]
   render() {
+    // const task = taskcompleted(this.props?.state?.tabledata)
+    // console.log(task)
+    const dte = Array.from(dateSet(this.props?.state?.tabledata));
+
     return (
       <>
-        <Table columns={this.columns} dataSource={this.props?.state?.tabledata.filter(val => val.completed === true)}></Table>
+        {dte.map(elemnet => (
+          <>
+            <div className='taskbox'>
+
+              <div className='bo'> <h3> <div className='bo1'>Date : {elemnet} </div> <div className='bo2'>completed: {this.props?.state?.tabledata.filter(val => val.completed === true && val.completed_date == elemnet).length}</div> </h3></div>
+              <Table columns={this.columns} dataSource={this.props?.state?.tabledata.filter(val => val.completed === true && val.completed_date == elemnet)}></Table>
+            </div>
+          </>))}
+
+
       </>
     )
   }

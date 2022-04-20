@@ -14,3 +14,6 @@ export const updateTodos = (payload) => {
 export const completeTodos = (payload) => {
     return { type: "COMPLETE_TODO", payload }
 }
+export const dateSeter = (payload) => {
+    return { type: "DATE_SETER", payload }
+}
